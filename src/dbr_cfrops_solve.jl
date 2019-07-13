@@ -86,24 +86,30 @@ function updatetree_dbr!(h::SVector, player::Int64, πi::Float64, πo::Float64,
     return u
 end
 
-function cfr_dbr(T::Int64, g::AirDefenseGame, gs::GameSet, pdbr::Vector{Float64}, σfix::Vector{Vector{Float64}})
+function cfr_dbr(g::AirDefenseGame, gs::GameSet, pdbr::Vector{Float64}, σfix::Vector{Vector{Float64}};
+        iterlimit::Int = 100_000, timelimit::Number = 600, tol::Float64 = 5e-5)
     ni, ni_stage, na_stage, players = gs.ni, gs.ni_stage, gs.na_stage, gs.players
     r = [zeros(numactions(i, ni_stage, na_stage)) for i in 1:ni] # regret
     s = [zeros(numactions(i, ni_stage, na_stage)) for i in 1:ni] # cumulative strategies
     u = 0.0
-    u1 = Vector{Float64}(undef, T)
-    println("MCCFR: starting $T iterations...")
-    # @progress for t in 1:T
-    for t in 1:T
+    u1 = Float64[]
+    u1deriv = 0
+    u1prev = 0
+    converged = false
+    iter = 1
+    tstart = now()
+    while !converged && tominute(now() - tstart) < timelimit && iter < iterlimit
         for player in players
             h0 = SVector(0, 0, 0, 0, 0, 0)
-            # u = updatetree_dbr!(h0, player, 1.0, 1.0, r, s, g, gs)
             u = updatetree_dbr!(h0, player, 1.0, 1.0, r, s, g, gs, 1, pdbr, σfix)
-            (player == 1) && (u1[t] = u)
+            (player == 1) && push!(u1, u)
         end
-        t % 10 == 0 && print("\rIteration $t complete. Utility: $(abs(u))")
+        u1deriv = u1deriv * (1 - 1 / iter) + (u1[iter] - u1prev) * (1 / iter)
+        converged = abs(u1deriv) < tol
+        u1prev = u1[iter]
+        iter % 10 == 0 && print("\rIter: $iter")
+        iter += 1
     end
-    println("...$T iterations complete.")
     denoms = [sum(i) for i in s]
     σ = Vector{Vector{Float64}}(undef, gs.ni)
     for i in eachindex(s)
@@ -113,7 +119,7 @@ function cfr_dbr(T::Int64, g::AirDefenseGame, gs::GameSet, pdbr::Vector{Float64}
             σ[i] = s[i][:] ./ denoms[i]
         end
     end
-    return u1, r, s, σ
+    return u1, r, s, σ, converged
 end
 
 function strat_cfr_dbr(s::Vector{Vector{Float64}})

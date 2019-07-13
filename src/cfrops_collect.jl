@@ -248,25 +248,32 @@ gs = GameSet(g)
 # alphas = [0.0, 0.0, 0.0, 0.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 1.5]
 # betas = [-8.0, -8.0, 8.0, 8.0, -8.0, -8.0, 8.0, 8.0, 8.0, -8.0, 0.5]
 # gammas = [0.0, 8.0, 0.0, 8.0, 0.0, 8.0, 0.0, 8.0, 0.0, 2.0, 2.0]
-reps = 10
+reps = 50
 alphas = repeat([8.0, 8.0, 1.5], inner = reps)
 betas = repeat([8.0, -8.0, 0.5], inner = reps)
 gammas = repeat([0.0, 2.0, 2.0], inner = reps)
 doe_discount = DataFrame(alpha = alphas, beta = betas, gamma = gammas)
-results = pmap((a,b,c) -> dcfr_full(g, gs, timelimit = 5, tol = 5e-5,
+results = pmap((a,b,c) -> dcfr_full(g, gs, timelimit = 10, tol = 5e-5,
                             α = a, β = b, γ = c, discounted = true), alphas, betas, gammas)
 nsteps = 12_000
 ums = [cumsum(r[1]) ./ collect(1:length(r[1])) for r in results]
 ums_means = [[mean(ums[i][j] for i = (k * reps + 1):((k + 1) * reps)) for j in 1:nsteps] for k in 0:2]
 ums_stds = [[std(ums[i][j] for i = (k * reps + 1):((k + 1) * reps)) for j in 1:nsteps] for k in 0:2]
+# us = [r[1] for r in results]
+# us_means = [[mean(us[i][j] for i = (k * reps + 1):((k + 1) * reps)) for j in 1:nsteps] for k in 0:2]
+# us_stds = [[std(us[i][j] for i = (k * reps + 1):((k + 1) * reps)) for j in 1:nsteps] for k in 0:2]
 pcolors = [:steelblue, :tomato, :mediumseagreen]
 pstyles = [:solid, :dash, :dashdot]
 fig = plot(xlabel = "Iterations", ylabel = "Defender Utility",
     xlims = (0, nsteps), ylims = (-1.27, -1.2))
+# fig = plot(xlabel = "Iterations", ylabel = "Defender Utility",
+#     xlims = (0, 2_000), ylims = (-1.5, -0.5))
 for i in 1:3
     plot!(fig, 1:nsteps, ums_means[i], ribbon = 2.009 * ums_stds[i] ./ sqrt(reps), fillalpha = 0.2, linecolor = pcolors[i],
         label = string(alphas[i*reps], ", ", betas[i*reps], ", ", gammas[i*reps]),
         linestyle = pstyles[i])
+    # plot!(fig, 1:nsteps, us_means[i], alpha = 0.5, seriestype = :line,
+    #     color = pcolors[i])
     # plot!(fig, 1:nsteps, ums_means[i] .- ums_stds[i], linecolor = pcolors[i], linestyle = :dot)
     # plot!(fig, 1:nsteps, ums_means[i] .+ ums_stds[i], linecolor = pcolors[i], linestyle = :dot)
 end

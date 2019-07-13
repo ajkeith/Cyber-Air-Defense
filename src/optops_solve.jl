@@ -136,6 +136,6 @@ function lp_robust_br(gos::GameOptSet, rp2lb, rp2ub; timelimit = 5 * 60)
     @show mr
     println("Solving model...")
     status, t_solve = @timed solve(mr)
-    rp1 = dual_row_solution(getrawsolver(mr))[1:nvconstraint] # player 1 strategy is the dual of player 1 values for each sequence constraint
+    rp1 = ClpCInterface.dual_row_solution(getrawsolver(mr))[1:nvconstraint] # player 1 strategy is the dual of player 1 values for each sequence constraint
     return status, getobjectivevalue(mr), rp1, getvalue(rp2), t_solve
 end

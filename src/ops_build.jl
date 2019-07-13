@@ -1,6 +1,6 @@
 using Pkg; Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
 using Revise, BenchmarkTools, Printf, ProgressMeter, Dates
-using Random, StatsBase, Distances, IterTools, DataFrames, DataFramesMeta
+using Random, StatsBase, Distributions, Distances, IterTools, DataFrames, DataFramesMeta
 using StaticArrays, SparseArrays
 
 #################################

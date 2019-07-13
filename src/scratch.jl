@@ -8,6 +8,17 @@ using Pkg; Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\St
 #
 ###########################
 
+## Robust collection
+
+# # build nominal fixed attacker strategy (NE)
+# pdbr = vcat(fill(0.95, gs.ni_stage[3]), fill(0.0, gs.ni_stage[5]), fill(0.85, gs.ni_stage[6]))
+# _, _, _, σNE = cfr(25_000, g, gs)
+
+# # check that DBR matches LP BR
+# T = 3000
+# u_dbr, _, _, _ = cfr_dbr(T, g, gs, ones(length(pconf)), σfix)
+# _, u_br, _ = lp_best_response(gos, real_strat(σfix, gs, gos)[2], fixedplayer = 2)
+# isapprox(mean(u_dbr), u_br, atol = 0.05)
 
 
 ## DOE design with some set factors and some constant factors
