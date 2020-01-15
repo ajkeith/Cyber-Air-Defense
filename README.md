@@ -10,8 +10,8 @@ The key files for each variant of CFR are:
 * `dcfrops_solve.jl`: Discounted counterfactual regret minimization.
 * `dbr_cfrops_solve.jl`: Data-biased response CFR variant. 
 
-The key files for the linear and robust programming appraoches are:
-* `optops_solve.jl`:
+The key file for the linear and robust programming appraoches are:
+* `optops_solve.jl`: Includes exact best response, Nash equilibrium, and robust linear programs. 
 
 The are several files for defining the game, helper functions, and analyzing results.
 * `ops_build.jl`: Builds the game structure
