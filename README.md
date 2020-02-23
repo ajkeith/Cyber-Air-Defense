@@ -1,5 +1,5 @@
 # Counterfactual Regret Minimization for Integrated Cyber and Air Defense
-This repository includes algorithms and data for monte carlo counterfactual regret minimization and several variants, including discounted, data-biased, and constrained CFR. It also includes linear programming formulations for best response, Nash equilibrium, and robust best response. 
+This repository includes algorithms and data for Monte Carlo counterfactual regret minimization and several variants, including discounted, data-biased, and constrained CFR. It also includes linear programming formulations for best response, Nash equilibrium, and robust best response. 
 
 ## Source Code
 The src file includes all development and analysis code.
@@ -10,7 +10,7 @@ The key files for each variant of CFR are:
 * `dcfrops_solve.jl`: Discounted counterfactual regret minimization.
 * `dbr_cfrops_solve.jl`: Data-biased response CFR variant. 
 
-The key file for the linear and robust programming appraoches are:
+The key file for the linear and robust programming approaches are:
 * `optops_solve.jl`: Includes exact best response, Nash equilibrium, and robust linear programs. 
 
 The are several files for defining the game, helper functions, and analyzing results.
