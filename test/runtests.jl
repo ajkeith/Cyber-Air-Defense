@@ -1,11 +1,10 @@
-using Pkg; Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+using Pkg; Pkg.activate(pwd())
 using Test, LinearAlgebra, Random, JLD2
 
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames\\src"
-include(joinpath(dir, "ops_utility.jl"))
-include(joinpath(dir, "ops_build.jl"))
-include(joinpath(dir, "ops_methods.jl"))
-include(joinpath(dir, "cfrops_solve.jl"))
+include(joinpath(pwd(), "src\\ops_utility.jl"))
+include(joinpath(pwd(), "src\\ops_build.jl"))
+include(joinpath(pwd(), "src\\ops_methods.jl"))
+include(joinpath(pwd(), "src\\cfrops_solve.jl"))
 
 @testset "Build Ops Game" begin
     # Build game and infosets Random.seed!(579843)
