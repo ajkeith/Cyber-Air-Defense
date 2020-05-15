@@ -11,7 +11,7 @@
 
 # add packages
 using Pkg
-Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+Pkg.activate(pwd())
 using Revise, Random, StatsBase
 
 const N = 1:2 # set of players

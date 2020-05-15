@@ -1,5 +1,5 @@
 # ] activate "I:\My Documents\00 AFIT\Research\Julia Projects\StrategyGames"
-using Pkg; Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+using Pkg; Pkg.activate(pwd())
 
 
 ############################
@@ -195,13 +195,13 @@ t' * X
 
 
 using CSV, DataFrames
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+dir = pwd()
 # fn = joinpath(dir, "data\\utility_fixed_default_100000.csv")
 # CSV.write(fn, DataFrame(utility = u))
 
-using Pkg; Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+using Pkg; Pkg.activate(pwd())
 using FileIO, JLD2
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+dir = pwd()
 fn = joinpath(dir, "data\\vars_fixed_default_100000.jld2")
 # # @ save fn u r s σ
 # # @ load fn u r s σ
@@ -272,7 +272,7 @@ utility_defender(g, coverage(g), seq2attacked_cities[s2_ind], seq1defended_iads[
 
 reward, reward_timing, bytes, gct, memallocs = @timed reward_seq(g, A, seqn..., seqactions...)
 using FileIO, JLD2
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+dir = pwd()
 # fn = joinpath(dir, "data\\temp.jld2")
 # @save fn g reward reward_timing
 
@@ -321,7 +321,7 @@ dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
 using Distributed
 addprocs(20); nprocs()
 @everywhere using Pkg
-@everywhere Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+@everywhere Pkg.activate(pwd())
 @everywhere using JuMP, Clp
 using BenchmarkTools
 
@@ -371,7 +371,7 @@ end
 using Distributed
 addprocs(3)
 @everywhere using Pkg
-@everywhere Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")  # required
+@everywhere Pkg.activate(pwd())  # required
 @everywhere using LightGraphs
 @everywhere using JuMP
 @everywhere using Clp
@@ -426,7 +426,7 @@ Gadfly.plot(iris, x=:SepalLength, y=:SepalWidth)
 
 ######## Game Size ########
 
-using Pkg; Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+using Pkg; Pkg.activate(pwd())
 using Revise, BenchmarkTools
 using Printf
 
@@ -551,11 +551,11 @@ end
 
 # JuliaDB Example from https://juliacomputing.com/blog/2019/02/27/juliadb.html
 using Pkg
-Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+Pkg.activate(pwd())
 using Distributed
 addprocs(12)
 @everywhere using Pkg
-@everywhere Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+@everywhere Pkg.activate(pwd())
 @everywhere using JuliaDB, OnlineStats
 
 cd("C:\\Users\\AKeith\\JuliaProjectsLocal\\temp")

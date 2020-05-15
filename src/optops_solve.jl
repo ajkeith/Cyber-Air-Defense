@@ -1,11 +1,11 @@
 # Sequence-form integrated cyber air defense, G = (N, Σ, g, C)
-using Pkg; Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+using Pkg; Pkg.activate(pwd())
 using Revise, LinearAlgebra, FileIO, JLD2, ProgressMeter
 using JuMP, Clp
 using Clp: ClpCInterface
 
 # load functions
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+dir = pwd()
 include(joinpath(dir, "src\\ops_utility.jl"))
 include(joinpath(dir, "src\\ops_build.jl"))
 include(joinpath(dir, "src\\ops_methods.jl"))

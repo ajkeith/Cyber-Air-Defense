@@ -1,5 +1,5 @@
 ######## Game Size ########
-using Pkg; Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+using Pkg; Pkg.activate(pwd())
 using Revise, BenchmarkTools
 using Printf
 

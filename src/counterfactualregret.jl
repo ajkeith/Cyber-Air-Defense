@@ -6,7 +6,7 @@
 
 # add packages
 using Pkg
-Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+Pkg.activate(pwd())
 using Distributed
 @everywhere using Random, StatsBase
 

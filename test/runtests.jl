@@ -50,7 +50,7 @@ end
     Σ, seqn, seqactions = build_Σset(g, A, ns1, ns2)
     # U, z = build_utility_hist(g, A, An)
     # reward = build_utility_seq(g, gs, seqn, seqactions) # takes an 1 hr to build...
-    dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+    dir = pwd()
     fn = joinpath(dir, "data\\vars_opt_rewardfunction.jld2")
     @load fn U z reward
     @test length(U) == 3_888_000

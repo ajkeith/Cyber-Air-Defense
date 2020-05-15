@@ -1,18 +1,18 @@
 ## packages
-using Pkg; Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+using Pkg; Pkg.activate(pwd())
 using Revise
 using LinearAlgebra, Random, Statistics, Distributions
 using FileIO, JLD2, CSV
 using Plots; gr()
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+dir = pwd()
 
 ## parallel packages
 using Distributed
 nworkers() == 1 && addprocs()
 @everywhere using Pkg
-@everywhere Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+@everywhere Pkg.activate(pwd())
 @everywhere using Revise
-@everywhere dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+@everywhere dir = pwd()
 @everywhere include(joinpath(dir, "src\\ops_utility.jl"))
 @everywhere include(joinpath(dir, "src\\ops_build.jl"))
 @everywhere include(joinpath(dir, "src\\ops_methods.jl"))
@@ -309,19 +309,19 @@ rerr(means[5], means[1]) # ccfr to ne
 ##########################################################
 # Robust CFR DOE
 
-using Pkg; Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+using Pkg; Pkg.activate(pwd())
 using Distributed, SharedArrays, Statistics, Dates
 using CSV
 # using Plots; gr()
 nprocs() == 1 && addprocs()
 @everywhere using Pkg
-@everywhere Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+@everywhere Pkg.activate(pwd())
 @everywhere(using Revise, BenchmarkTools, Printf, ProgressMeter, FileIO, JLD2)
 @everywhere(using Random, LinearAlgebra, Statistics, Distances, IterTools, DataFrames, DataFramesMeta)
 @everywhere(using StaticArrays, SparseArrays)
 @everywhere(using JuMP, Clp)
 @everywhere(using Clp: ClpCInterface)
-@everywhere dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+@everywhere dir = pwd()
 @everywhere include(joinpath(dir, "src\\ops_utility.jl"))
 @everywhere include(joinpath(dir, "src\\ops_build.jl"))
 @everywhere include(joinpath(dir, "src\\ops_methods.jl"))

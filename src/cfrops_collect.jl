@@ -1,8 +1,8 @@
-using Pkg; Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+using Pkg; Pkg.activate(pwd())
 using Revise
 using Test, LinearAlgebra, Random, Statistics
 using FileIO, JLD2
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+dir = pwd()
 include(joinpath(dir, "src\\ops_utility.jl"))
 include(joinpath(dir, "src\\ops_build.jl"))
 include(joinpath(dir, "src\\ops_methods.jl"))
@@ -24,7 +24,7 @@ ns1, ns2, ns1_stage, ns2_stage = build_nseq(g, na_stage, ni_stage)
 (U, z), uh_time = @timed build_utility_hist(g, A, An)
 reward_exp2, runtime2, nalloc, gc_time, misc = @timed build_utility_seq(g, gs, seqn, seqactions, expected = true)
 
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+dir = pwd()
 fn = joinpath(dir, "data\\vars_opt_rewardfunction_expected_15city_temp.jld2")
 # @save fn g U z reward_exp Σ seqn seqactions runtime nalloc
 @show runtime
@@ -60,13 +60,13 @@ ns1, ns2, ns1_stage, ns2_stage = build_nseq(g, na_stage, ni_stage)
 (U, z), uh_time = @timed build_utility_hist(g, A, An)
 (reward_exp, reward_complete), runtime, _, _, _ = @timed build_utility_seq(g, gs, (ns1, ns2), seqn, seqactions, expected = true)
 
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+dir = pwd()
 fn = joinpath(dir, "data\\vars_opt_rewardfunction_expected_15city_flipped_temp.jld2")
 # @save fn g U z reward_exp Σ seqn seqactions runtime
 @show runtime
 # load(fn)
 
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+dir = pwd()
 include(joinpath(dir, "src\\dbr_cfrops_solve.jl"))
 using Plots; gr()
 utemp, rtemp, stemp, σtemp = cfr(1_000, g, gs)
@@ -194,13 +194,13 @@ using Plots; gr()
 using Distributed
 nprocs() == 1 && addprocs()
 @everywhere using Pkg
-@everywhere Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+@everywhere Pkg.activate(pwd())
 @everywhere(using Revise, BenchmarkTools, Printf, ProgressMeter, FileIO, JLD2)
 @everywhere(using Random, LinearAlgebra, Statistics, Distances, IterTools, DataFrames, DataFramesMeta)
 @everywhere(using StaticArrays, SparseArrays)
 @everywhere(using JuMP, Clp)
 @everywhere(using Clp: ClpCInterface)
-@everywhere dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+@everywhere dir = pwd()
 @everywhere include(joinpath(dir, "src\\ops_utility.jl"))
 @everywhere include(joinpath(dir, "src\\ops_build.jl"))
 @everywhere include(joinpath(dir, "src\\ops_methods.jl"))
@@ -280,7 +280,7 @@ end
 plot!(fig, 1:nsteps, fill(-1.2595387377, nsteps), label = "Nash Equilibrium",
     linestyle = :dot, color = :black)
 
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+dir = pwd()
 fn = joinpath(dir, "data\\plot_stepsize_v4_temp.pdf")
 # savefig(fn)
 fn = joinpath(dir, "data\\vars_stepsize_fig_temp.jld2")
@@ -288,19 +288,19 @@ fn = joinpath(dir, "data\\vars_stepsize_fig_temp.jld2")
 
 ##########################################################
 # CFR DOE
-using Pkg; Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+using Pkg; Pkg.activate(pwd())
 using Distributed, SharedArrays, Statistics, Dates
 using CSV
 # using Plots; gr()
 nprocs() == 1 && addprocs()
 @everywhere using Pkg
-@everywhere Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+@everywhere Pkg.activate(pwd())
 @everywhere(using Revise, BenchmarkTools, Printf, ProgressMeter, FileIO, JLD2)
 @everywhere(using Random, LinearAlgebra, Statistics, Distances, IterTools, DataFrames, DataFramesMeta)
 @everywhere(using StaticArrays, SparseArrays)
 @everywhere(using JuMP, Clp)
 @everywhere(using Clp: ClpCInterface)
-@everywhere dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+@everywhere dir = pwd()
 @everywhere include(joinpath(dir, "src\\ops_utility.jl"))
 @everywhere include(joinpath(dir, "src\\ops_build.jl"))
 @everywhere include(joinpath(dir, "src\\ops_methods.jl"))
@@ -413,20 +413,20 @@ dfr = hcat(design, DataFrame(utility = [ri[1] for ri in results_doe],
 ##########################################################
 # CFR Large
 
-using Pkg; Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+using Pkg; Pkg.activate(pwd())
 using Revise
 using Distributed, SharedArrays, Statistics, Dates
 using CSV
 # using Plots; gr()
 nprocs() == 1 && addprocs()
 @everywhere using Pkg
-@everywhere Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+@everywhere Pkg.activate(pwd())
 @everywhere(using Revise, BenchmarkTools, Printf, ProgressMeter, FileIO, JLD2)
 @everywhere(using Random, LinearAlgebra, StatsBase, Distances, IterTools, DataFrames, DataFramesMeta)
 @everywhere(using StaticArrays, SparseArrays)
 @everywhere(using JuMP, Clp)
 @everywhere(using Clp: ClpCInterface)
-@everywhere dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+@everywhere dir = pwd()
 @everywhere include(joinpath(dir, "src\\ops_utility.jl"))
 @everywhere include(joinpath(dir, "src\\ops_build.jl"))
 @everywhere include(joinpath(dir, "src\\ops_methods.jl"))
@@ -585,7 +585,7 @@ plot!(T ÷ 10:T ÷ 10:T, u_rerr * 100, seriestype = :scatter, markerstrokealpha 
     markercolor = :steelblue)
 plot!(1:T, fill(0.5, T), linecolor = :red)
 annotate!(T, 0.6, text("0.5% Exploitability", 10, :red, :right))
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+dir = pwd()
 fn = joinpath(dir, "data\\plot_default_temp.pdf")
 # savefig(fn)
 
@@ -618,7 +618,7 @@ dp3 = getlaydown(h3, g, coverage(g), gs.A)
 plot_laydown(dp3)
 dp1 = getlaydown(h1, g, coverage(g), gs.A)
 plot_laydown(dp1)
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+dir = pwd()
 fn = joinpath(dir, "data\\plot_default_[1,1,1,1,6,39].pdf")
 savefig(fn)
 h2 = h_mle(σ, g, gs, chance_ind = [1,1,0,4,0,0])
@@ -634,13 +634,13 @@ using Distributed, Statistics, Plots
 gr()
 addprocs(10); nprocs()
 @everywhere using Pkg
-@everywhere Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
+@everywhere Pkg.activate(pwd())
 @everywhere(using Revise, BenchmarkTools, Printf, ProgressMeter, FileIO, JLD2)
 @everywhere(using Random, LinearAlgebra, StatsBase, Distances, IterTools, DataFrames, DataFramesMeta)
 @everywhere(using StaticArrays, SparseArrays)
 @everywhere(using JuMP, Clp)
 @everywhere(using Clp: ClpCInterface)
-@everywhere dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+@everywhere dir = pwd()
 @everywhere include(joinpath(dir, "src\\ops_utility.jl"))
 @everywhere include(joinpath(dir, "src\\ops_build.jl"))
 @everywhere include(joinpath(dir, "src\\ops_methods.jl"))
@@ -665,7 +665,7 @@ us = [mean(r[1]) for r in results]
 plot(ps, us, xlabel = "Probability of Detection", ylabel = "Defender Utility",
     legend = false, seriestype = :line)
 plot!(ps, us, seriestype = :scatter, markerstrokealpha = 0, markercolor = :steelblue)
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+dir = pwd()
 fn = joinpath(dir, "data\\plot_pdetect_stoprule_temp.pdf")
 # savefig(fn)
 
