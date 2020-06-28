@@ -186,7 +186,7 @@ ns1, ns2, ns1_stage, ns2_stage = build_seq(g, na_stage, ni_stage)
 reward = build_utility_lp(g, gs, ns1, ns2, seq1defended_iads, seq2attacked_iads, seq2defended_iads, seq2attacked_cities)
 
 using JuMP, Clp, SparseArrays
-m = Model(solver = ClpSolver())
+m = Model(Clp.Optimizer)
 X = sparse([1,2,3],[1,2,3], [0,2,0])
 t = [1, 10, 100]
 t' * X
@@ -326,7 +326,7 @@ addprocs(20); nprocs()
 using BenchmarkTools
 
 @everywhere function runm(ub::Float64)
-    m = Model(solver = ClpSolver())
+    m = Model(Clp.Optimizer)
     @variable(m, 0 <= x <= 2 )
     @variable(m, 0 <= y <= 30 )
     @objective(m, Max, 5x + 3*y )
@@ -378,7 +378,7 @@ addprocs(3)
 
 
 @everywhere function runm(ub::Float64)
-    m = Model(solver = ClpSolver())
+    m = Model(Clp.Optimizer)
     @variable(m, 0 <= x <= 2 )
     @variable(m, 0 <= y <= 30 )
 

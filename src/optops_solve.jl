@@ -50,7 +50,7 @@ function lp_best_response(gos::GameOptSet, rfixed::Vector{Float64}; fixedplayer:
     seqIi, seqIo = fixedplayer == 1 ? (seqI2, seqI1) : (seqI1, seqI2)
     nextseqIi, nextseqIo = fixedplayer == 1 ? (nextseqI2, nextseqI1) : (nextseqI1, nextseqI2)
     println("Building model...")
-    m = Model(solver = ClpSolver())
+    m = Model(Clp.Optimizer)
     @variable(m, r[1:nsi] >= 0)
     if fixedplayer == 1 # reward is player 1's reward(seq1, seq2) so we can't switch the indexes
         @objective(m, Max, sum(-1 * gos.reward[I] * rfixed[I[1]] * r[I[2]] for I in ind_nz))
