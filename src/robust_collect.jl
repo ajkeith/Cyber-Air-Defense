@@ -57,7 +57,7 @@ function build_robust_game()
     println("Building robust game...")
     fn = joinpath(dir, "data\\vars_opt_rewardfunction_expected_10city_flippedpac.jld2")
     fload = load(fn) # loads g and reward_exp
-    g, (reward_exp, _) = fload["g"], fload["reward_exp"]
+    g, reward_exp = fload["g"], fload["reward_exp"]
     gs = GameSet(g)
     gos = GameOptSet(g, gs, reward_exp)
     return g, gs, gos
@@ -129,7 +129,7 @@ end
 
 @everywhere function calc_robust(gs, gos, r1s, σfix, noise, nreps)
     println("Building noisy opponent strategies...")
-    σfix_rands = [[normalize(clamp.(x .+ rand(noise, length(x)), 0.0, 1.0), 1) for x in σfix] for _ in 1:nreps]
+    σfix_rands = [[LinearAlgebra.normalize(clamp.(x .+ rand(noise, length(x)), 0.0, 1.0), 1) for x in σfix] for _ in 1:nreps]
     !all(all(all(y .>= 0) for y in x) for x in σfix_rands) && @warn "Negative probabilities."
     println("Calculating utility of robust strategies...")
     ind_nz = findall(!iszero, gos.reward)
@@ -146,8 +146,8 @@ function plot_robust(u1tuple)
     u1_nes, u1_brs, u1_rs, u1_dbrs, u1_ccfrs = u1tuple
     fig = histogram(u1_nes, bins=:auto, color=:mediumseagreen, alpha=0.2,
                 xlabel = "Defender Utility", ylabel = "Count",
-                label = "Nash Equilibrium Strategy",
-                xlims = (-0.420, -0.390))
+                label = "Nash Equilibrium Strategy")
+                # xlims = (-0.420, -0.390))
     # histogram!(fig, u1_brs, bins=:auto, color=:tomato, alpha=0.2,
     #             label = "Best Response Strategy")
     histogram!(fig, u1_rs, bins=:auto, color=:tomato, alpha=0.95,
@@ -227,11 +227,31 @@ end
 ##########################################################
 # Single game comparison
 
-(r1s, ts, statuses, σfix, noise), buildtime = @timed build_robust(g, gs, gos, conf, sd, opplevel)
-print("\rRun $i: Simulating value...")
-u1tuple, calctime = @timed calc_robust(gs, gos, r1s, σfix, noise, nreps)
-summary = vcat(i + 6, statuses[3:5]..., ts[3:5]..., process_robust(u1tuple, r1s, gos, nreps)...)
+conf = 0.99
+sd = 0.02
+opplevel = 1
+nreps = 180
 
+# build_robust
+# g, gs, gos = build_robust_game()
+# # build_robust takes about 20 min
+# (r1s, ts, statuses, σfix, noise), buildtime = @timed build_robust(g, gs, gos, conf, sd, opplevel)
+# fn = joinpath(pwd(), "data\\results_robust_10city_flippedpac.jld2")
+# @save fn g gos r1s ts statuses σfix noise 
+
+# load build_robust outputs
+fn = joinpath(pwd(), "data\\results_robust_10city_flippedpac.jld2")
+fload = load(fn) 
+g, gos, r1s, σfix, noise = fload["g"], fload["gos"], fload["r1s"], fload["σfix"], fload["noise"]
+gs = GameSet(g)
+
+# calc_robust
+u1tuple, calctime = @timed calc_robust(gs, gos, r1s, σfix, noise, nreps)
+
+# process_robust 
+ts, statuses = fload["ts"], fload["statuses"]
+results_robust = process_robust(u1tuple, r1s, gos, nreps)
+plot_robust(u1tuple)
 
 ##########################################################
 # Size Experiment
