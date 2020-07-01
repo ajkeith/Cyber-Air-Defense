@@ -77,7 +77,7 @@ end
 
 function matchregret(I::Vector{Node})
     ind = findfirst(isequal(I), Iset)
-    na = length(AI[ind]})
+    na = length(AI[ind])
     σ = Vector{Float64}(undef, na)
     for a in AI[ind]
         denom = sum(b * max(r[ind][b], 0) for b in AI[ind])

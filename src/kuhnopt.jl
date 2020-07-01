@@ -5,7 +5,6 @@
 # Useful extensive-form websites:
 # https://cw.fel.cvut.cz/old/_media/courses/be4m36mas/6.pdf
 
-using Pkg; Pkg.activate("I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames")
 using JuMP, Clp
 using LinearAlgebra
 
