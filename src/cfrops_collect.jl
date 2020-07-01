@@ -60,7 +60,7 @@ ns1, ns2, ns1_stage, ns2_stage = build_nseq(g, na_stage, ni_stage)
 (U, z), uh_time = @timed build_utility_hist(g, A, An)
 (reward_exp, reward_complete), runtime, _, _, _ = @timed build_utility_seq(g, gs, (ns1, ns2), seqn, seqactions, expected = true)
 
-dir = "I:\\My Documents\\00 AFIT\\Research\\Julia Projects\\StrategyGames"
+dir = pwd()
 fn = joinpath(dir, "data\\vars_opt_rewardfunction_expected_15city_flipped_temp.jld2")
 # @save fn g U z reward_exp Σ seqn seqactions runtime
 @show runtime

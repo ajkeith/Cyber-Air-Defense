@@ -24,9 +24,38 @@ nworkers() == 1 && addprocs()
 @everywhere include(joinpath(dir, "src\\ops_results.jl"))
 
 ## build g, gs, gos
+function build_robust_game_scratch!()
+    g = AirDefenseGame(10,
+    reshape([0.03674972063074833,0.7471235124528937,0.8006182686839263,0.1134119509104532,0.3720810993450727,0.6452465195265953,0.9927983579441313,0.8545575129265128,0.29473362663716407,0.9808676508834953,0.6242283949611096,0.6173536676330247,0.4739652533798455,0.6677615345281047,0.6338233451643072,0.8231268712815414,0.011816562466650193,0.048514560425303443,0.7974455234366102,0.22065505430418475], 10, 2),
+    [0.47973468500756566,0.1596483573101528,0.7116043145363229,0.969005005082471,0.7139100481289631,0.4747849042596852,0.5066187533113924,0.7074385618615113,0.21009348198668265,0.29520436695319363],
+    0.3,
+    5,
+    3,
+    4,
+    4,
+    2,
+    2,
+    0.9,
+    0.8,
+    0.7,
+    0.2,
+    [1, 3, 4, 5, 9])
+    # approx 1.2M nodes
+    gs = GameSet(g)
+    A, An, na_stage = build_action(g)
+    ni, ni1, ni2, ni_stage = build_info(g)
+    ns1, ns2, ns1_stage, ns2_stage = build_nseq(g, na_stage, ni_stage)
+    Σ, seqn, seqactions = build_Σset(g, A, ns1, ns2)
+    (U, z), uh_time = @timed build_utility_hist(g, A, An)
+    (reward_exp, reward_complete), runtime, _, _, _ = @timed build_utility_seq(g, gs, (ns1, ns2), seqn, seqactions, expected = true)
+    fn = joinpath(pwd(), "data\\vars_opt_rewardfunction_expected_10city_flippedpac.jld2")
+    @save fn g U z reward_exp Σ seqn seqactions runtime
+    @show runtime
+end
+
 function build_robust_game()
     println("Building robust game...")
-    fn = joinpath(dir, "data\\vars_opt_rewardfunction_expected_15city_flipped.jld2")
+    fn = joinpath(dir, "data\\vars_opt_rewardfunction_expected_10city_flippedpac.jld2")
     fload = load(fn) # loads g and reward_exp
     g, (reward_exp, _) = fload["g"], fload["reward_exp"]
     gs = GameSet(g)
@@ -195,8 +224,18 @@ end
     return vcat(i + 6, statuses[3:5]..., ts[3:5]..., process_robust(u1tuple, r1s, gos, nreps)...)
 end
 
+##########################################################
+# Single game comparison
 
-## run
+(r1s, ts, statuses, σfix, noise), buildtime = @timed build_robust(g, gs, gos, conf, sd, opplevel)
+print("\rRun $i: Simulating value...")
+u1tuple, calctime = @timed calc_robust(gs, gos, r1s, σfix, noise, nreps)
+summary = vcat(i + 6, statuses[3:5]..., ts[3:5]..., process_robust(u1tuple, r1s, gos, nreps)...)
+
+
+##########################################################
+# Size Experiment
+
 dirlocal = "C:\\Users\\AKeith\\JuliaProjectsLocal\\StrategyGamesLocal"
 fnlocal = joinpath(dirlocal, "data\\vars_opt_rewardfunction_expected_7to15city_temp.jld2")
 @load joinpath(dirlocal, "data\\vars_opt_rewardfunction_expected_7to15city.jld2") results # approx 5 min
