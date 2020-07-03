@@ -64,7 +64,7 @@ function plot_laydown(df::DataFrame)
     plot!(p, df_ac.x, df_ac.y, seriestype = :scatter, markershape = :+,
         markeralpha = 0.0, markercolor = :purple, markersize = 7,
         markerstrokealpha = 1.0, markerstrokecolor = :purple, markerstrokewidth = 0.0001,
-        markerstrokestyle = :dash, label = "Cyber Attack")
+        label = "Cyber Attack")
     # label cities with value
     for i in 1:size(df, 1)
         annotate!(p, df.x[i], df.y[i], text(string("  ", round(df.value[i], digits = 2)), 10, :left, :darkgray))
@@ -92,6 +92,6 @@ function plot_laydown(df::DataFrame)
     plot!(p, df_ap.x, df_ap.y, seriestype = :scatter, markershape = :x,
         markeralpha = 0.0, markerstrokecolor = colors, markersize = 7,
         markerstrokealpha = 1.0, markerstrokewidth = 1,
-        markerstrokestyle = :dash, label = "Physical Attack")
+        label = "Physical Attack")
     p
 end

@@ -89,6 +89,8 @@ end
     status_br, u_br, r1_br = lp_best_response(gos, rp2fix, fixedplayer = 2)
     println("Calculating Robust BR LP strategy...")
     status_r, u_r, r1_r, r2_r, t_r = lp_robust_br(gos, rp2lb, rp2ub, timelimit = T_sec)
+    println("Calculating CFR strategy...")
+    (u_cfr, r_cfr, s_cfr, σ_cfr), t_cfr = @timed cfr(15_000, g, gs)
     println("Calculating Robust DBR CFR strategy...")
     (u_dbr, _, _, σ_dbr, status_dbr), t_dbr = @timed cfr_dbr(g, gs, pconf, σfix,
             tol = 5e-9, timelimit = T_min, iterlimit = 25_000)
@@ -99,8 +101,15 @@ end
             α = 7.4, β = -2.9, γ = 6.3, discounted = true,
             λmax = 2000, λscale = 5)
     r1_ccfr = real_strat(σ_ccfr, gs, gos)[1]
-    return (r1_ne, r1_br, r1_r, r1_dbr, r1_ccfr), (t_ne, 0.0, t_r, t_dbr, t_ccfr),
-        (status_ne, status_br, status_r, status_dbr, status_ccfr)
+    return (r1_ne, r1_br, r1_r, r1_dbr, r1_ccfr), 
+        (t_ne, 0.0, t_r, t_dbr, t_ccfr),
+        (status_ne, status_br, status_r, status_dbr, status_ccfr),
+        (σ_cfr, σ_dbr, σ_ccfr)
+        # TODO: 
+        # - add cfr as solution here
+        # - return sigmas of cfr-based solutions
+        # - compare most-likely cfr policy with most-likey db-cfr (and ccfr?)
+        # - finish writing up response
 end
 
 @everywhere function build_robust(g, gs, gos, conf::Float64, sd::Float64, opplevel::Int)
@@ -112,8 +121,8 @@ end
     end
     println("Building opponent strategies...")
     rp2fix, rp2lb, rp2ub, rp2lb_ccfr, rp2ub_ccfr, noise = build_opponent_strat(g, gs, gos, σfix, conf, sd)
-    r1s, ts, statuses = calc_robust_strat(g, gs, gos, rp2fix, rp2lb, rp2ub, rp2lb_ccfr, rp2ub_ccfr, σfix, pconf)
-    return r1s, ts, statuses, σfix, noise
+    r1s, ts, statuses, σs = calc_robust_strat(g, gs, gos, rp2fix, rp2lb, rp2ub, rp2lb_ccfr, rp2ub_ccfr, σfix, pconf)
+    return r1s, ts, statuses, σfix, noise, σs
 end
 
 @everywhere function simrobust(σfix_rand, gs, gos, r1s, ind_nz; reps = 10)
@@ -224,6 +233,22 @@ end
     return vcat(i + 6, statuses[3:5]..., ts[3:5]..., process_robust(u1tuple, r1s, gos, nreps)...)
 end
 
+function h_mle(σ, g, gs; chance_ind = [1,1,0,1,0,0])
+    h = SVector(0, 0, 0, 0, 0, 0)
+    depth = 1
+    for i = 1:6
+        if getplayer(depth) == 3
+            h = setindex(h, chance_ind[depth], depth)
+            depth += 1
+        else
+            maxval, maxind = findmax(σ[infoset(h, depth, g, gs)])
+            h = setindex(h, maxind, depth)
+            depth += 1
+        end
+    end
+    h
+end
+
 ##########################################################
 # Single game comparison
 
@@ -232,17 +257,17 @@ sd = 0.02
 opplevel = 1
 nreps = 180
 
-# build_robust
+# # build_robust
 # g, gs, gos = build_robust_game()
 # # build_robust takes about 20 min
-# (r1s, ts, statuses, σfix, noise), buildtime = @timed build_robust(g, gs, gos, conf, sd, opplevel)
-# fn = joinpath(pwd(), "data\\results_robust_10city_flippedpac.jld2")
-# @save fn g gos r1s ts statuses σfix noise 
+# (r1s, ts, statuses, σfix, noise, σs), buildtime = @timed build_robust(g, gs, gos, conf, sd, opplevel)
+# fn = joinpath(pwd(), "data\\results_robust_10city_flippedpac_withsig.jld2")
+# @save fn g gos r1s ts statuses σfix noise σs
 
 # load build_robust outputs
-fn = joinpath(pwd(), "data\\results_robust_10city_flippedpac.jld2")
+fn = joinpath(pwd(), "data\\results_robust_10city_flippedpac_withsig.jld2")
 fload = load(fn) 
-g, gos, r1s, σfix, noise = fload["g"], fload["gos"], fload["r1s"], fload["σfix"], fload["noise"]
+g, gos, r1s, σfix, noise, σs = fload["g"], fload["gos"], fload["r1s"], fload["σfix"], fload["noise"], fload["σs"]
 gs = GameSet(g)
 
 # calc_robust
@@ -253,6 +278,22 @@ ts, statuses = fload["ts"], fload["statuses"]
 results_robust = process_robust(u1tuple, r1s, gos, nreps)
 plot_robust(u1tuple)
 
+σs[1][infoset(SVector(4,4,3,4,0,0), 5, g, gs)]
+sh1 = h_mle(σs[1], g, gs, chance_ind = [2,3,0,4,0,0])
+sh2 = h_mle(σs[3], g, gs, chance_ind = [2,3,0,4,0,0])
+plot_laydown(getlaydown(SVector(1,1,2,1,2,1), g, coverage(g), gs.A))
+
+bar(1:3, rand(3))
+
+for alg in 1:3, act in 1:4
+    ps[alg, act] = bar(σs[alg][infoset(SVector(1,1,1,act,0,0), 5, g, gs)])
+end
+
+l = @layout [a b c d; e f g h; i j k l]
+plot(ps[1,1], ps[1,2], ps[1,3], ps[1,4],
+        ps[2,1], ps[2,2], ps[2,3], ps[2,4],
+        ps[3,1], ps[3,2], ps[3,3], ps[3,4],
+        layout = l)
 ##########################################################
 # Size Experiment
 
