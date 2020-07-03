@@ -270,6 +270,9 @@ fload = load(fn)
 g, gos, r1s, σfix, noise, σs = fload["g"], fload["gos"], fload["r1s"], fload["σfix"], fload["noise"], fload["σs"]
 gs = GameSet(g)
 
+
+# run to here
+
 # calc_robust
 u1tuple, calctime = @timed calc_robust(gs, gos, r1s, σfix, noise, nreps)
 
@@ -278,22 +281,52 @@ ts, statuses = fload["ts"], fload["statuses"]
 results_robust = process_robust(u1tuple, r1s, gos, nreps)
 plot_robust(u1tuple)
 
+########### skip to here
+
+## build output
 σs[1][infoset(SVector(4,4,3,4,0,0), 5, g, gs)]
 sh1 = h_mle(σs[1], g, gs, chance_ind = [2,3,0,4,0,0])
 sh2 = h_mle(σs[3], g, gs, chance_ind = [2,3,0,4,0,0])
 plot_laydown(getlaydown(SVector(1,1,2,1,2,1), g, coverage(g), gs.A))
 
-bar(1:3, rand(3))
+σs[1][infoset(SVector(1,1,1,1,0,0), 5, g, gs)]'
 
+# build plots
+ps = Array{Any}(undef, 3, 4)
 for alg in 1:3, act in 1:4
     ps[alg, act] = bar(σs[alg][infoset(SVector(1,1,1,act,0,0), 5, g, gs)])
 end
 
+# build table
+function make_policy_table(g, gs, σs)
+    policy_table = zeros(6)'
+    for alg in 1:3, act in 1:4
+        policy_table = vcat(policy_table, σs[alg][infoset(SVector(1,1,1,act,0,0), 5, g, gs)]')
+    end
+    policy_table 
+end
+
+policy_table = make_policy_table(g, gs, σs)
+policy_df = convert(DataFrame, policy_table[2:13, :])
+policy_df[:Algorithm] = ["CFR", "CFR", "CFR", "CFR",
+                            "DBCFR", "DBCFR", "DBCFR", "DBCFR",
+                            "CCFR", "CCFR", "CCFR", "CCFR"]
+policy_df[:Action] = ["1", "2", "3", "4",
+                        "1", "2", "3", "4",
+                        "1", "2", "3", "4"] 
+permutecols!(policy_df, [7, 8, 1, 2, 3, 4, 5, 6])
+CSV.write(joinpath(pwd(), "data\\results_robust_policy.csv"), policy_df)
+
+
+
 l = @layout [a b c d; e f g h; i j k l]
+l2 = @layout [a b c d]
 plot(ps[1,1], ps[1,2], ps[1,3], ps[1,4],
         ps[2,1], ps[2,2], ps[2,3], ps[2,4],
         ps[3,1], ps[3,2], ps[3,3], ps[3,4],
         layout = l)
+plot(ps[1,1], ps[1,2], ps[1,3], ps[1,4],
+        layout = l2)
 ##########################################################
 # Size Experiment
 
